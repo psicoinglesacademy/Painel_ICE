@@ -23,13 +23,16 @@
 </head>
 
 <body>
-
+<div class="section hero">
 <header>
-<h2>🧠 Painel de prática - ICE</h2>
+<h2>🧠 Painel para Frases - ICE</h2>
 <p>By Teacher Evan</p>
+
+</div>
+
 <a href="index.html" class="back">⬅ Voltar</a>
 </header>
-
+</div>
 <div class="card">
   <h3>🧩 Nível 1 — Estrutura básica</h3>
   <p>Sujeito + Verbo + Objeto</p>
@@ -75,8 +78,26 @@
 <button onclick="applyReplace()">🔄 Aplicar Substituição</button>
 
 </div>
+</div>
+
+<!-- ===== IA CORRETORA ===== -->
+<div class="card">
+
+  <h3>🤖 Correção com IA</h3>
+  <p>Formule sua frase acima. Depois envie para correção.</p>
+
+  <iframe 
+    src="https://app.edcafe.ai/chatbots/69efe14b4eb81875b9dad001"
+    title="Correção ICE"
+    allow="microphone"
+    style="border:none; width:100%; height:600px;">
+  </iframe>
 
 </div>
+
+  <div class="hero-image">
+    <img src="header.png" alt="ICE Banner">
+  </div>
 
 <script src="data.js"></script>
 <script>
@@ -90,7 +111,12 @@ function fill(id, list){
   let el = document.getElementById(id);
   el.innerHTML = '<option value="">none</option>';
 
-  list.forEach(item=>{
+  // 🔥 ORDENA ALFABETICAMENTE
+  const sorted = [...list].sort((a, b) => {
+    return clean(a.v).localeCompare(clean(b.v));
+  });
+
+  sorted.forEach(item=>{
     el.innerHTML += `<option value="${clean(item.v)}">${item.v}</option>`;
   });
 }
@@ -126,7 +152,31 @@ const semanticMap = {
 
 // ===== BANCO =====
 const subjects = GLOBAL.function_words.pronouns.filter(p => p.tags.includes("pron_subj"));
-const verbs = GLOBAL.content_words.verbs.filter(v => v.tags.includes("verb_obj"));
+const verbs = GLOBAL.content_words.verbs.filter(v => {
+
+  const word = v.v.toLowerCase().trim();
+
+  return (
+    v.tags.includes("verb_obj") &&
+
+    // ❌ remove infinitivo
+    !v.tags.includes("verb_inf") &&
+    !word.startsWith("to ") &&
+
+    // ❌ remove gerúndio
+    !v.tags.includes("verb_ing") &&
+    !v.tags.includes("verb_ing_form") &&
+    !word.endsWith("ing") &&
+
+    // ❌ remove phrasal/prep
+    !v.tags.includes("verb_prep") &&
+
+    // ❌ remove verbos especiais
+    !v.tags.includes("verb_modal") &&
+    !v.tags.includes("verb_link") &&
+    !v.tags.includes("verb_2obj")
+  );
+});
 const objects = GLOBAL.function_words.pronouns.filter(p => p.tags.includes("pron_obj"));
 
 const dets = GLOBAL.function_words.determiners;

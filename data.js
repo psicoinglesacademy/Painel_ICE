@@ -2538,7 +2538,6 @@ const GLOBAL = {
         "v": "like (gostar)",
         "tags": [
           "verb",
-          "verb_ing",
           "verb_obj"
         ]
       },
@@ -4844,6 +4843,78 @@ const GLOBAL = {
         "tags": [
           "verb",
           "verb_to"
+        ]
+      },
+      {
+        "v": "want (querer)",
+        "tags": [
+          "verb_obj"
+        ]
+      },
+      {
+        "v": "need (precisar)",
+        "tags": [
+          "verb_obj"
+        ]
+      },
+      {
+        "v": "know (saber/conhecer)",
+        "tags": [
+          "verb_obj"
+        ]
+      },
+      {
+        "v": "find (encontrar)",
+        "tags": [
+          "verb_obj"
+        ]
+      },
+      {
+        "v": "dislike (não gostar)",
+        "tags": [
+          "verb_obj"
+        ]
+      },
+      {
+        "v": "fear (temer)",
+        "tags": [
+          "verb_obj"
+        ]
+      },
+      {
+        "v": "doubt (duvidar)",
+        "tags": [
+          "verb_obj"
+        ]
+      },
+      {
+        "v": "reject (rejeitar)",
+        "tags": [
+          "verb_obj"
+        ]
+      },
+      {
+        "v": "ignore (ignorar)",
+        "tags": [
+          "verb_obj"
+        ]
+      },
+      {
+        "v": "blame (culpar)",
+        "tags": [
+          "verb_obj"
+        ]
+      },
+      {
+        "v": "judge (julgar)",
+        "tags": [
+          "verb_obj"
+        ]
+      },
+      {
+        "v": "criticize (criticar)",
+        "tags": [
+          "verb_obj"
         ]
       }
     ],
