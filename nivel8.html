@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consulta - Movimentos de Conversa</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+  <h2>🧠 Painel de prática - ICE</h2>
+  <p>Consulta de Movimentos de Conversa</p>
+  <a href="index.html" class="back">⬅ Voltar</a>
+</header>
+
+<div class="card">
+  <h3>📚 Consulta rápida</h3>
+  <p>Escolha e visualize diretamente no menu.</p>
+</div>
+
+<!-- ORIENTAÇÃO -->
+<div class="card">
+<h4>🧭 Orientação</h4>
+<select id="orientation"></select>
+</div>
+
+<!-- INFORMAÇÃO -->
+<div class="card">
+<h4>📢 Informação</h4>
+<select id="information"></select>
+</div>
+
+<!-- INTERAÇÃO -->
+<div class="card">
+<h4>🔄 Interação</h4>
+<select id="interaction"></select>
+</div>
+
+<!-- CONEXÃO -->
+<div class="card">
+<h4>🔗 Conexão</h4>
+<select id="connection"></select>
+</div>
+
+<!-- COMENTÁRIO -->
+<div class="card">
+<h4>💬 Comentário</h4>
+<select id="comment"></select>
+</div>
+
+<!-- CONCLUSÃO -->
+<div class="card">
+<h4>✅ Conclusão</h4>
+<select id="conclusion"></select>
+</div>
+
+<script src="data.js"></script>
+
+<script>
+
+// ===== FILL DINÂMICO PADRÃO
+function fill(id, data){
+  const el = document.getElementById(id);
+  el.innerHTML = `<option>none</option>`;
+
+  if(!data) return;
+
+  data.forEach(item=>{
+    let text = item.v || item; // segurança
+    el.innerHTML += `<option>${text}</option>`;
+  });
+}
+
+// ===== CARREGAMENTO DO BANCO
+fill("orientation", GLOBAL.conversation_moves?.orientation);
+fill("information", GLOBAL.conversation_moves?.information);
+fill("interaction", GLOBAL.conversation_moves?.interaction);
+fill("connection", GLOBAL.conversation_moves?.connection);
+fill("comment", GLOBAL.conversation_moves?.comment);
+fill("conclusion", GLOBAL.conversation_moves?.conclusion);
+
+</script>
+
+</body>
+</html>

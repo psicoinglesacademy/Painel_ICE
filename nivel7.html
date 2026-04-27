@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Nível 7 - ICE</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.section{display:flex;justify-content:center;}
+.wrapper{max-width:900px;width:100%;}
+.card{margin:20px auto;text-align:center;}
+
+.row{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+select{
+  min-width:120px;
+  text-align:center;
+}
+
+textarea, select{
+  display:block;
+  margin:8px auto;
+}
+
+.tabs{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-bottom:10px;
+}
+
+.tab{
+  padding:6px 10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+
+.preview{
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:10px;
+  background:#16609b;
+  border-left:5px solid #e7534d;
+  color:#ffffff;
+  font-size:16px;
+  text-align:center;
+  font-weight:500;
+}
+
+.preview strong{
+  display:block;
+  color:#ffffff;
+}
+
+.chat{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:15px;
+}
+
+.msg{
+  padding:12px;
+  border-radius:12px;
+  max-width:65%;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* direita */
+.me{
+  background:#d1f5d3;
+  align-self:flex-end;
+  text-align:right;
+}
+
+/* esquerda */
+.other{
+  background:#e4e6eb;
+  align-self:flex-start;
+  text-align:left;
+}
+
+.copy-btn{
+  margin-top:20px;
+  padding:10px 14px;
+  border:none;
+  background:#4CAF50;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+button{
+  margin-top:20px;
+}
+
+label{
+  display:block;
+  margin-top:16px;
+  font-weight:bold;
+}
+
+textarea{
+  margin-bottom:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header style="text-align:center;">
+<h2>🧠 Nível 7 — ICE</h2>
+<p>✍️ Construção de diálogo com movimentos de conversa</p>
+
+<div style="margin-top:10px;">
+  <a href="index.html" style="
+    display:inline-block;
+    padding:8px 14px;
+    background:#e4e6eb;
+    border-radius:6px;
+    text-decoration:none;
+    color:black;
+  ">
+    ⬅ Voltar
+  </a>
+</div>
+
+</header>
+
+<div class="section"><div class="wrapper">
+
+<!-- ================= BLOCO 1 ================= -->
+<div class="card">
+<h3>🧑‍💬 Linha 1 — Minha fala</h3>
+
+<label>👋 Cumprimento</label>
+<select id="greeting"></select>
+
+<label>🧭 Orientação</label>
+<select id="orientation"></select>
+
+<label>✏️ Correção</label>
+<select id="correction"></select>
+
+<div class="preview">
+<strong id="p0"></strong>
+</div>
+
+<label>➕ ✏️ Complemento ✏️</label>
+<textarea id="correctionText" rows="2"></textarea>
+
+<h3>🧩 Informação 1</h3>
+
+<label>👤 Sujeito</label>
+<div class="row">
+<select id="detS"></select>
+<select id="adjS"></select>
+<select id="nounS"></select>
+</div>
+
+<label>🔴 Verbos</label>
+<div class="row">
+<select id="v1b"></select>
+<select id="v1c"></select>
+</div>
+
+<label>🔵 Objeto</label>
+<div class="row">
+<select id="detO"></select>
+<select id="adjO"></select>
+<select id="nounO"></select>
+</div>
+
+<div class="preview">
+<strong id="p1_full"></strong>
+</div>
+
+<label>✏️ Editar frase ✏️</label>
+<textarea id="customInfo1" rows="2"></textarea>
+</div>
+
+<!-- ================= BLOCO 2 ================= -->
+<div class="card">
+<h3>🟣 Linha 2 — Pergunta</h3>
+
+<select id="greeting2"></select>
+<select id="comment2"></select>
+
+<div class="preview"><strong id="q1"></strong></div>
+
+<label>✏️ Editar pergunta ✏️</label>
+<textarea id="customQ" rows="2"></textarea>
+</div>
+
+<!-- ================= BLOCO 3 ================= -->
+<div class="card">
+<h3>🟡 Linha 3 — Narrativa</h3>
+
+<!-- 🔥 NOVO MENU DE CONECTORES -->
+<select id="connector"></select>
+
+<div class="preview"><strong id="p2"></strong></div>
+
+<label>👤 Sujeito</label>
+<div class="row">
+<select id="s2"></select>
+</div>
+
+<label>🔴 Verbo</label>
+<div class="row">
+<select id="v2"></select>
+</div>
+
+<label>🔵 Objeto</label>
+<div class="row">
+<select id="o2"></select>
+</div>
+
+
+
+<!-- 🔥 NOVO CAMPO DE EDIÇÃO -->
+<label>✏️ Editar frase ✏️</label>
+<textarea id="customInfo2" rows="2"></textarea>
+
+</div>
+
+<!-- ================= BLOCO 4 ================= -->
+<div class="card">
+<h3>🔵 Linha 4 — Fechamento</h3>
+
+<select id="comment"></select>
+
+<div class="preview"><strong id="p2_repeat"></strong></div>
+
+<label>✏️ Editar repetição ✏️</label>
+<textarea id="customRep" rows="2"></textarea>
+
+<select id="conclusion"></select>
+</div>
+
+<!-- ================= RESULTADO ================= -->
+<div class="card">
+<div style="margin-top:20px;">
+  <button onclick="buildConversation()">✍️ Gerar Conversa</button>
+</div>
+
+<div id="chat" class="chat"></div>
+
+<textarea id="copy" style="display:none;"></textarea>
+
+<div style="margin-top:15px;">
+  <button class="copy-btn" onclick="copyText()">📋 Copiar</button>
+</div>
+</div>
+
+</div></div>
+
+<script src="data.js"></script>
+
+<script>
+
+/* ================= UTIL ================= */
+function clean(v){return v.split(" (")[0];}
+
+function fill(id,list){
+let el=document.getElementById(id);
+el.innerHTML='<option value="">none</option>';
+list.forEach(i=>el.innerHTML+=`<option value="${clean(i.v)}">${i.v}</option>`);
+}
+
+function buildNP(det,adj,noun){
+if(!noun) return "";
+if(!det) det="the";
+return [det,adj,noun].filter(Boolean).join(" ");
+}
+
+/* ================= BANCO ================= */
+const nouns=[...GLOBAL.content_words.nuclei,...GLOBAL.content_words.nouns];
+const verbs=GLOBAL.content_words.verbs.filter(v =>
+v.tags.includes("verb_obj") &&
+!v.v.startsWith("to ") &&
+!v.v.endsWith("ing")
+);
+
+
+// verbos que pedem infinitivo com "to"
+const verbs_to_follow = GLOBAL.content_words.verbs.filter(v =>
+  v.tags.includes("verb_to")
+);
+
+// verbos já com "to"
+const verbs_inf = GLOBAL.content_words.verbs.filter(v =>
+  v.v.startsWith("to ")
+);
+
+/* ================= LOAD ================= */
+["detS","detO"].forEach(id=>fill(id,GLOBAL.function_words.determiners));
+["adjS","adjO"].forEach(id=>fill(id,GLOBAL.content_words.adjectives));
+["nounS","nounO"].forEach(id=>fill(id,nouns));
+
+// v1b → verbo que pede "to"
+fill("v1b", verbs_to_follow);
+
+// v1c → verbo com "to"
+fill("v1c", verbs_inf);
+
+// v2 mantém normal
+fill("v2", verbs);
+["s2","o2"].forEach(id=>fill(id,GLOBAL.function_words.pronouns));
+
+/* 🔥 NOVOS CONECTORES */
+fill("connector", GLOBAL.conversation_moves.connection);
+
+// 🔥 CARREGAMENTO DINÂMICO DOS MOVIMENTOS DE CONVERSA
+
+fill("greeting", GLOBAL.conversation_moves.greeting);
+fill("orientation", GLOBAL.conversation_moves.orientation);
+fill("correction", GLOBAL.conversation_moves.correction);
+fill("greeting2", GLOBAL.conversation_moves.greeting);
+fill("comment2", GLOBAL.conversation_moves.comment);
+fill("comment", GLOBAL.conversation_moves.comment);
+fill("conclusion", GLOBAL.conversation_moves.conclusion);
+
+/* ================= FRASES ================= */
+function info1(){
+return `${buildNP(detS.value,adjS.value,nounS.value)} ${v1b.value} ${v1c.value} ${buildNP(detO.value,adjO.value,nounO.value)}`;
+}
+
+function info2(){
+return `${s2.value} ${v2.value} ${o2.value}`;
+}
+
+/* ================= UPDATE ================= */
+document.querySelectorAll("select,textarea").forEach(e=>e.oninput=update);
+
+function update(){
+
+let i1=info1();
+let i2=info2();
+
+let customInfo1=customInfo1Input();
+let customQVal=customQ.value.trim();
+let customRepVal=customRep.value.trim();
+let customInfo2Val=customInfo2.value.trim();
+
+
+let preview0 = `${greeting.value} ${orientation.value} ${correction.value} ${correctionText.value}`;
+p0.innerHTML = preview0;
+let baseLine1=`${greeting.value} ${orientation.value} ${correction.value} ${correctionText.value}, ${i1}`;
+
+p1_full.innerHTML = customInfo1 || baseLine1;
+
+q1.innerHTML = customQVal || `${greeting2.value} ${comment2.value} why did they ${v1b.value} ${buildNP(detO.value,adjO.value,nounO.value)}?`;
+
+/* 🔥 BLOCO 3 */
+p2.innerHTML = customInfo2Val || `${i1} ${connector.value} ${i2}`;
+
+p2_repeat.innerHTML = customRepVal || i2;
+}
+
+function customInfo1Input(){
+return document.getElementById("customInfo1").value.trim();
+}
+
+/* ================= FINAL ================= */
+function buildConversation(){
+
+let i1=info1();
+let i2=info2();
+
+let baseLine1=`${greeting.value} ${orientation.value} ${correction.value} ${correctionText.value}, ${i1}`;
+
+let line1=`Me: ${customInfo1Input() || baseLine1}`;
+
+let question = customQ.value.trim() || `${greeting2.value} ${comment2.value} why did they ${v1b.value} ${buildNP(detO.value,adjO.value,nounO.value)}?`;
+
+let repetition = customRep.value.trim() || i2;
+
+/* 🔥 BLOCO 3 */
+let customInfo2Val=customInfo2.value.trim();
+let line3=`Me: ${customInfo2Val || `${i1} ${connector.value} ${i2}`}`;
+
+let line2=`Other: ${question}`;
+let line4=`Other: ${comment.value}. ${repetition}. ${conclusion.value}.`;
+
+chat.innerHTML="";
+[line1,line2,line3,line4].forEach((l,i)=>{
+let d=document.createElement("div");
+d.className="msg "+(i%2===0?"me":"other");
+d.innerText=l;
+chat.appendChild(d);
+});
+
+copy.value=`${line1}\n${line2}\n${line3}\n${line4}`;
+}
+
+/* ================= COPY ================= */
+function copyText(){
+navigator.clipboard.writeText(copy.value);
+}
+
+update();
+
+</script>
+
+</body>
+</html>

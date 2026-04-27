@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Nível 1 - ICE</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+.row{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.row select{
+  flex:1;
+  min-width:120px;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h2>🧠 Painel de prática - ICE</h2>
+<p>By Teacher Evan</p>
+<a href="index.html" class="back">⬅ Voltar</a>
+</header>
+
+<div class="card">
+  <h3>🧩 Nível 1 — Estrutura básica</h3>
+  <p>Sujeito + Verbo + Objeto</p>
+</div>
+
+<div class="card">
+
+<label>👤 Sujeito</label>
+<select id="s1"></select>
+
+<label>🔴 Verbo</label>
+<select id="v1"></select>
+
+<label>🔵 Objeto</label>
+<select id="o1"></select>
+
+<button onclick="build()">✍️ Formular Frase</button>
+
+<div class="result" id="result"></div>
+
+<div id="replaceArea" style="display:none; margin-top:20px;">
+
+<!-- SUJEITO -->
+<div class="group">
+<label>🔁 Substituir sujeito</label>
+<div class="row">
+<select id="detRS"></select>
+<select id="adjRS"></select>
+<select id="nounRS"></select>
+</div>
+</div>
+
+<!-- OBJETO -->
+<div class="group">
+<label>🔁 Substituir objeto</label>
+<div class="row">
+<select id="detRO"></select>
+<select id="adjRO"></select>
+<select id="nounRO"></select>
+</div>
+</div>
+
+<button onclick="applyReplace()">🔄 Aplicar Substituição</button>
+
+</div>
+
+</div>
+
+<script src="data.js"></script>
+<script>
+
+// ===== UTIL =====
+function clean(v){
+  return v.split(" (")[0];
+}
+
+function fill(id, list){
+  let el = document.getElementById(id);
+  el.innerHTML = '<option value="">none</option>';
+
+  list.forEach(item=>{
+    el.innerHTML += `<option value="${clean(item.v)}">${item.v}</option>`;
+  });
+}
+
+// ===== BUILD NP (CORREÇÃO PRINCIPAL) =====
+function buildNP(det, adj, noun){
+  if(!noun) return "";
+  if(!det) det = "the";
+  return [det, adj, noun].filter(Boolean).join(" ");
+}
+
+// ===== FILTRO SEMÂNTICO =====
+function filterSmart(nucleus){
+
+  const base = GLOBAL.content_words.nuclei.find(n => clean(n.v) === nucleus);
+  if(!base) return [];
+
+  const core = base.tags[0];
+  const number = base.tags.includes("plural") ? "plural" : "singular";
+
+  return GLOBAL.content_words.nouns.filter(n =>
+    n.tags.includes(core) && n.tags.includes(number)
+  );
+}
+
+// ===== MAPA SEMÂNTICO =====
+const semanticMap = {
+  "he":"man",
+  "she":"woman",
+  "it":"thing",
+  "they":"people"
+};
+
+// ===== BANCO =====
+const subjects = GLOBAL.function_words.pronouns.filter(p => p.tags.includes("pron_subj"));
+const verbs = GLOBAL.content_words.verbs.filter(v => v.tags.includes("verb_obj"));
+const objects = GLOBAL.function_words.pronouns.filter(p => p.tags.includes("pron_obj"));
+
+const dets = GLOBAL.function_words.determiners;
+const adjs = GLOBAL.content_words.adjectives;
+const nuclei = GLOBAL.content_words.nuclei;
+
+// ===== LOAD =====
+fill("s1", subjects);
+fill("v1", verbs);
+fill("o1", objects);
+
+["detRS","detRO"].forEach(id=>fill(id,dets));
+["adjRS","adjRO"].forEach(id=>fill(id,adjs));
+["nounRS","nounRO"].forEach(id=>fill(id,nuclei));
+
+let current = {};
+
+// ===== BUILD =====
+function build(){
+
+  let s = s1.value;
+  let v = v1.value;
+  let o = o1.value;
+
+  if(!s || !v){
+    result.innerHTML = "<span style='color:red'>Selecione sujeito e verbo</span>";
+    return;
+  }
+
+  current = {s,v,o};
+
+  result.innerHTML = `
+    <span class="blue">${s}</span>
+    <span class="verb">${v}</span>
+    ${o ? `<span class="blue">${o}</span>` : ""}
+  `;
+
+  updateReplace();
+  replaceArea.style.display="block";
+}
+
+// ===== UPDATE REPLACE =====
+function updateReplace(){
+
+  let subj = current.s;
+  let obj = current.o;
+
+  // SUJEITO
+  if(semanticMap[subj]){
+    fill("nounRS", filterSmart(semanticMap[subj]));
+  } else {
+    fill("nounRS", GLOBAL.content_words.nouns);
+  }
+
+  // OBJETO
+  if(obj){
+    if(obj === "him" || obj === "her"){
+      fill("nounRO", filterSmart("man"));
+    }
+    else if(obj === "them"){
+      fill("nounRO", filterSmart("people"));
+    }
+    else if(obj === "it"){
+      fill("nounRO", filterSmart("thing"));
+    }
+    else{
+      fill("nounRO", GLOBAL.content_words.nouns);
+    }
+  } else {
+    fill("nounRO", GLOBAL.content_words.nouns);
+  }
+}
+
+// ===== APPLY =====
+function applyReplace(){
+
+  let newSubject = current.s;
+  let newObject = current.o;
+
+  if(nounRS.value){
+    newSubject = buildNP(detRS.value, adjRS.value, nounRS.value);
+  }
+
+  if(nounRO.value){
+    newObject = buildNP(detRO.value, adjRO.value, nounRO.value);
+  }
+
+  result.innerHTML = `
+    <span class="blue">${newSubject}</span>
+    <span class="verb">${current.v}</span>
+    ${newObject ? `<span class="blue">${newObject}</span>` : ""}
+  `;
+}
+
+</script>
+
+</body>
+</html>

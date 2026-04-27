@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Nível 5 - ICE</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+.row{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.row select{
+  flex:1;
+  min-width:120px;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+  <h2>🧠 Painel de prática - ICE</h2>
+  <p>By Teacher Evan</p>
+  <a href="index.html" class="back">⬅ Voltar</a>
+</header>
+
+<div class="card">
+  <h3>🧠 Nível 5 — Intenção + ação + objetivo</h3>
+  <p><b>S + (V1 + V2) + O + V3 + O</b></p>
+</div>
+
+<div class="card">
+
+<!-- SUJEITO -->
+<div class="group">
+  <label>👤 Sujeito</label>
+  <div class="row">
+    <select id="detS"></select>
+    <select id="adjS"></select>
+    <select id="nounS"></select>
+  </div>
+</div>
+
+<!-- BLOCO DE VERBOS -->
+<div class="group">
+  <label>🔴 Intenção + Ação</label>
+  <div class="row">
+    <select id="v1"></select> <!-- verb_to -->
+    <select id="v2"></select> <!-- verb_inf -->
+  </div>
+</div>
+
+<!-- OBJETO 1 -->
+<div class="group">
+  <label>🔵 Objeto</label>
+  <div class="row">
+    <select id="detO1"></select>
+    <select id="adjO1"></select>
+    <select id="nounO1"></select>
+  </div>
+</div>
+
+<!-- VERBO FINAL -->
+<div class="group">
+  <label>🔴 Ação final</label>
+  <select id="v3"></select>
+</div>
+
+<!-- OBJETO 2 -->
+<div class="group">
+  <label>🔵 Objeto final</label>
+  <div class="row">
+    <select id="detO2"></select>
+    <select id="adjO2"></select>
+    <select id="nounO2"></select>
+  </div>
+</div>
+
+<button onclick="build()">✍️ Formular Frase</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<script src="data.js"></script>
+<script>
+
+// ===== UTIL =====
+function clean(v){
+  return v.split(" (")[0];
+}
+
+function fill(id, list){
+  let el = document.getElementById(id);
+  el.innerHTML = '<option value="">none</option>';
+
+  list.forEach(item=>{
+    el.innerHTML += `<option value="${clean(item.v)}">${item.v}</option>`;
+  });
+}
+
+// ===== BUILD NP =====
+function buildNP(det, adj, noun){
+
+  if(!noun) return "";
+
+  const item = GLOBAL.content_words.nouns.find(n => clean(n.v) === noun);
+
+  if(!det){
+    if(item && (item.tags.includes("plural") || item.tags.includes("uncountable"))){
+      return [adj, noun].filter(Boolean).join(" ");
+    }
+    det = "the";
+  }
+
+  return [det, adj, noun].filter(Boolean).join(" ");
+}
+
+// ===== BANCO =====
+const dets = GLOBAL.function_words.determiners;
+const adjs = GLOBAL.content_words.adjectives;
+const nouns = GLOBAL.content_words.nouns;
+const verbs = GLOBAL.content_words.verbs;
+
+// 🔥 FILTROS CORRETOS
+const verbTO = verbs.filter(v => v.tags.includes("verb_to"));
+
+const verbINF_OBJ = verbs.filter(v =>
+  v.tags.includes("verb_inf") &&
+  v.tags.includes("verb_obj")
+);
+
+// ===== LOAD =====
+["detS","detO1","detO2"].forEach(id=>fill(id,dets));
+["adjS","adjO1","adjO2"].forEach(id=>fill(id,adjs));
+["nounS","nounO1","nounO2"].forEach(id=>fill(id,nouns));
+
+fill("v1", verbTO);
+fill("v2", verbINF_OBJ);
+fill("v3", verbINF_OBJ);
+
+let current = {};
+
+// ===== BUILD =====
+function build(){
+
+  current = {
+    detS:detS.value,
+    adjS:adjS.value,
+    nounS:nounS.value,
+    v1:v1.value,
+    v2:v2.value,
+    v3:v3.value,
+    detO1:detO1.value,
+    adjO1:adjO1.value,
+    nounO1:nounO1.value,
+    detO2:detO2.value,
+    adjO2:adjO2.value,
+    nounO2:nounO2.value
+  };
+
+  render();
+}
+
+// ===== RENDER =====
+function render(){
+
+  let s = buildNP(current.detS, current.adjS, current.nounS);
+  let o1 = buildNP(current.detO1, current.adjO1, current.nounO1);
+  let o2 = buildNP(current.detO2, current.adjO2, current.nounO2);
+
+  let result = `
+    <span class="blue">${s}</span>
+    <span class="verb">${current.v1}</span>
+    <span class="verb">${current.v2}</span>
+    <span class="blue">${o1}</span>
+    <span class="verb">${current.v3}</span>
+    <span class="blue">${o2}</span>
+  `;
+
+  document.getElementById("result").innerHTML = result;
+}
+
+</script>
+
+</body>
+</html>

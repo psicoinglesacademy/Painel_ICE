@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Nível 3 - ICE</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.row{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.row select{
+  flex:1;
+  min-width:120px;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h2>🧠 Painel de prática - ICE</h2>
+<p>By Teacher Evan</p>
+<a href="index.html" class="back">⬅ Voltar</a>
+</header>
+
+<div class="card">
+  <h3>🧩 Nível 3 — Construção + Transformação</h3>
+  <p><b>Sujeito + Verbos + Objeto</b></p>
+</div>
+
+<div class="card">
+
+<!-- SUJEITO -->
+<div class="group">
+  <label>👤 Sujeito</label>
+  <div class="row">
+    <select id="detS"></select>
+    <select id="adjS"></select>
+    <select id="nounS"></select>
+  </div>
+</div>
+
+<!-- VERBOS -->
+<div class="group">
+  <label>🔴 Verbos</label>
+  <select id="v1"></select>
+  <select id="v2"></select>
+</div>
+
+<!-- OBJETO -->
+<div class="group">
+  <label>🔵 Objeto</label>
+  <div class="row">
+    <select id="detO"></select>
+    <select id="adjO"></select>
+    <select id="nounO"></select>
+  </div>
+</div>
+
+<button onclick="build()">✍️ Formular Frase</button>
+
+<div class="result" id="result"></div>
+
+<div id="replaceArea" style="display:none; margin-top:20px;">
+
+<!-- SUBSTITUIÇÃO POR NÚCLEO -->
+<div class="group">
+  <label>🔁 Substituir nome (sujeito)</label>
+  <select id="replaceS"></select>
+</div>
+
+<div class="group">
+  <label>🔁 Substituir nome (objeto)</label>
+  <select id="replaceO"></select>
+</div>
+
+<!-- PRONOMES -->
+<div class="group">
+  <label>🔁 Sujeito → pronome</label>
+  <select id="pronounS"></select>
+</div>
+
+<div class="group">
+  <label>🔁 Objeto → pronome</label>
+  <select id="pronounO"></select>
+</div>
+
+<button onclick="applyReplace()">🔄 Aplicar Transformação</button>
+
+</div>
+
+</div>
+
+<script src="data.js"></script>
+<script>
+
+// ===== CLEAN =====
+function clean(v){
+  return v.split(" (")[0];
+}
+
+// ===== FILL =====
+function fill(id, list){
+  let el = document.getElementById(id);
+  el.innerHTML = '<option value="">none</option>';
+
+  list.forEach(item=>{
+    el.innerHTML += `<option value="${clean(item.v)}">${item.v}</option>`;
+  });
+}
+
+// ===== BUILD NP =====
+function buildNP(det, adj, noun){
+  if(!noun) return "";
+  if(!det) det = "the";
+  return [det, adj, noun].filter(Boolean).join(" ");
+}
+
+// ===== FILTRO SEMÂNTICO =====
+function filterSmart(nucleus){
+
+  const base = GLOBAL.content_words.nuclei.find(n => clean(n.v) === nucleus);
+  if(!base) return [];
+
+  const core = base.tags[0];
+  const number = base.tags.includes("plural") ? "plural" : "singular";
+
+  return GLOBAL.content_words.nouns.filter(n =>
+    n.tags.includes(core) && n.tags.includes(number)
+  );
+}
+
+// ===== BANCO =====
+const dets = GLOBAL.function_words.determiners;
+const adjs = GLOBAL.content_words.adjectives;
+const nuclei = GLOBAL.content_words.nuclei;
+const verbs = GLOBAL.content_words.verbs;
+
+const subjectPronouns = GLOBAL.function_words.pronouns.filter(p => p.tags.includes("pron_subj"));
+const objectPronouns = GLOBAL.function_words.pronouns.filter(p => p.tags.includes("pron_obj"));
+
+// estrutura verbal correta
+const verb1 = verbs.filter(v=>v.tags.includes("verb_to"));
+const verb2 = verbs.filter(v=>v.tags.includes("verb_obj"));
+
+// ===== LOAD =====
+["detS","detO"].forEach(id=>fill(id,dets));
+["adjS","adjO"].forEach(id=>fill(id,adjs));
+["nounS","nounO"].forEach(id=>fill(id,nuclei));
+
+fill("v1", verb1);
+fill("v2", verb2);
+
+fill("pronounS", subjectPronouns);
+fill("pronounO", objectPronouns);
+
+let current = {};
+
+// ===== BUILD =====
+function build(){
+
+  current = {
+    detS:detS.value,
+    adjS:adjS.value,
+    nounS:nounS.value,
+    v1:v1.value,
+    v2:v2.value,
+    detO:detO.value,
+    adjO:adjO.value,
+    nounO:nounO.value
+  };
+
+  updateReplace();
+  render();
+  replaceArea.style.display="block";
+}
+
+// ===== UPDATE REPLACE =====
+function updateReplace(){
+
+  fill("replaceS", filterSmart(current.nounS));
+  fill("replaceO", filterSmart(current.nounO));
+}
+
+// ===== APPLY =====
+function applyReplace(){
+
+  let subject = buildNP(current.detS, current.adjS, current.nounS);
+  let object = buildNP(current.detO, current.adjO, current.nounO);
+
+  // substituir por noun
+  if(replaceS.value){
+    subject = buildNP(current.detS, current.adjS, replaceS.value);
+  }
+
+  if(replaceO.value){
+    object = buildNP(current.detO, current.adjO, replaceO.value);
+  }
+
+  // substituir por pronome (prioridade)
+  if(pronounS.value){
+    subject = pronounS.value;
+  }
+
+  if(pronounO.value){
+    object = pronounO.value;
+  }
+
+  render(subject, object);
+}
+
+// ===== RENDER =====
+function render(customS=null, customO=null){
+
+  let s = customS || buildNP(current.detS, current.adjS, current.nounS);
+  let o = customO || buildNP(current.detO, current.adjO, current.nounO);
+
+  let v = [current.v1, current.v2].filter(Boolean).join(" ");
+
+  result.innerHTML = `
+    <span class="blue">${s}</span>
+    <span class="verb">${v}</span>
+    <span class="blue">${o}</span>
+  `;
+}
+
+</script>
+
+</body>
+</html>

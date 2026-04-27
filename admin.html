@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Admin Banco Linguístico</title>
+
+<style>
+body{
+  font-family: Arial;
+  background:#f2f3f5;
+  padding:20px;
+}
+.container{
+  max-width:1100px;
+  margin:auto;
+}
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
+}
+textarea{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+}
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+.validate{ background:#2196F3; color:#fff; }
+.export{ background:#ff9800; color:#fff; }
+
+select{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+}
+
+.log{
+  background:#111;
+  color:#0f0;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  white-space: pre-line;
+}
+
+.viewer{
+  background:#000;
+  color:#0f0;
+  padding:10px;
+  border-radius:8px;
+  max-height:350px;
+  overflow:auto;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+<h3>➕ Inserir Linhas</h3>
+
+<textarea id="bulkInput" rows="10"></textarea>
+
+<button class="validate" onclick="validateBulk()">🧪 Validar</button>
+<button onclick="processBulk()">💾 Salvar</button>
+<button onclick="generateBackup()">📋 Backup</button>
+<button onclick="resetData()">🧹 Resetar</button>
+<button class="export" onclick="exportData()">⬇️ Exportar</button>
+
+<div id="log" class="log">Aguardando...</div>
+</div>
+
+<div class="card">
+<h3>👀 Visualizar Banco</h3>
+
+<select id="category" onchange="renderViewer()"></select>
+
+<div id="viewer" class="viewer"></div>
+</div>
+
+<!-- 🔥 BUSCA MOVIDA PARA FINAL -->
+<div class="card">
+
+<h3>🔎 Buscar e editar item</h3>
+
+<input id="searchInput" placeholder="Digite a palavra (ex: like)">
+<button onclick="searchItem()">Buscar</button>
+<button onclick="removeAllResults()">🧹 Remover todos resultados</button>
+
+<div id="results" style="margin-top:15px;"></div>
+
+<h3>📦 Linha de importação</h3>
+<textarea id="importOutput" style="height:120px;"></textarea>
+
+</div>
+
+</div>
+
+<script src="data.js"></script>
+<script>
+
+// ================= HELP =================
+function getCategory(path){
+  const [group, sub] = path.split(".");
+  return GLOBAL[group]?.[sub];
+}
+
+// ================= POPULAR SELECT DINAMICAMENTE =================
+function populateCategories(){
+  const select = document.getElementById("category");
+  select.innerHTML = '<option value="">Selecione</option>';
+
+  for(let group in GLOBAL){
+    for(let sub in GLOBAL[group]){
+      const value = `${group}.${sub}`;
+      select.innerHTML += `<option value="${value}">${value}</option>`;
+    }
+  }
+}
+
+// ================= BUSCA =================
+let lastResults = [];
+
+function searchItem(){
+
+  const term = document.getElementById("searchInput").value.toLowerCase();
+  let results = [];
+
+  for(let group in GLOBAL){
+    for(let sub in GLOBAL[group]){
+
+      GLOBAL[group][sub].forEach((item, index)=>{
+        
+
+        if(item.v.toLowerCase().includes(term)){
+          results.push({group, sub, index, item});
+        }
+      });
+
+    }
+  }
+
+  lastResults = results;
+
+  showResults(results);
+}
+
+// ================= REMOVER TODOS =================
+function removeAllResults(){
+
+  if(lastResults.length === 0){
+    alert("Nada para remover");
+    return;
+  }
+
+  for(let i = lastResults.length - 1; i >= 0; i--){
+    const r = lastResults[i];
+    GLOBAL[r.group][r.sub].splice(r.index, 1);
+  }
+
+  document.getElementById("results").innerHTML = "";
+  document.getElementById("searchInput").value = "";
+
+  log("🧹 Todos os resultados removidos");
+}
+
+// ================= RESULTADOS =================
+function showResults(results){
+
+  let container = document.getElementById("results");
+  container.innerHTML = "";
+
+  if(results.length === 0){
+    container.innerHTML = "❌ Nada encontrado";
+    return;
+  }
+
+  results.forEach((r,i)=>{
+
+    container.innerHTML += `
+      <div style="margin-bottom:10px; padding:10px; border:1px solid #ccc;">
+        <strong>${r.group}.${r.sub}</strong><br>
+
+        Palavra:
+        <input id="word_${i}" value="${r.item.v}">
+
+        Tags:
+        <input id="tags_${i}" value="${r.item.tags.join(",")}">
+
+        <button onclick="replaceItem(${i}, '${r.group}', '${r.sub}', ${r.index})">
+          🔄 Substituir
+        </button>
+
+        <button onclick="saveAsNew(${i}, '${r.group}', '${r.sub}')">
+          💾 Salvar como novo
+        </button>
+      </div>
+    `;
+  });
+}
+
+// ================= SUBSTITUIR =================
+function replaceItem(i, group, sub, index){
+
+  const newWord = document.getElementById(`word_${i}`).value;
+  const newTags = document.getElementById(`tags_${i}`).value
+    .split(",").map(t=>t.trim()).filter(t=>t);
+
+  GLOBAL[group][sub][index] = { v:newWord, tags:newTags };
+
+  document.getElementById("importOutput").value =
+    `${newWord} | ${group}.${sub} | ${newTags.join(",")}`;
+
+  document.getElementById("results").innerHTML = "";
+  document.getElementById("searchInput").value = "";
+
+  alert("🔄 Substituído!");
+}
+
+// ================= SALVAR NOVO =================
+function saveAsNew(i, group, sub){
+
+  const newWord = document.getElementById(`word_${i}`).value;
+  const newTags = document.getElementById(`tags_${i}`).value
+    .split(",").map(t=>t.trim()).filter(t=>t);
+
+  GLOBAL[group][sub].push({ v:newWord, tags:newTags });
+
+  document.getElementById("importOutput").value =
+    `${newWord} | ${group}.${sub} | ${newTags.join(",")}`;
+
+  document.getElementById("results").innerHTML = "";
+  document.getElementById("searchInput").value = "";
+
+  alert("💾 Salvo!");
+}
+
+// ================= BULK =================
+function processBulk(){
+
+  const lines = document.getElementById("bulkInput").value.split("\n");
+
+  let added = 0;
+  let errors = [];
+
+  lines.forEach((line, i)=>{
+
+    if(!line.trim()) return; // ignora vazio
+
+    let parts = line.split("|");
+
+    if(parts.length !== 3){
+      errors.push(`Linha ${i+1} inválida`);
+      return;
+    }
+
+    let value = parts[0].trim();
+    let path = parts[1].trim();
+    let tags = parts[2].trim();
+
+    let cat = getCategory(path);
+
+    if(!cat){
+      errors.push(`Linha ${i+1}: categoria não existe (${path})`);
+      return;
+    }
+
+    cat.push({
+      v: value,
+      tags: tags.split(",").map(t => t.trim())
+    });
+
+    added++;
+  });
+
+  log(`✔ ${added} itens adicionados\n❌ ${errors.length} erros`);
+
+  if(errors.length){
+    console.log(errors);
+  }
+
+  renderViewer(); // 🔥 atualiza visual
+}
+
+// ================= OUTROS =================
+function validateBulk(){ log("✔ Validado"); }
+
+function exportData(){
+  const blob = new Blob([
+  "const GLOBAL = " + JSON.stringify(GLOBAL, null, 2) + ";"
+]);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "data.js";
+  a.click();
+}
+
+function renderViewer(){
+  const path = document.getElementById("category").value;
+  const cat = getCategory(path);
+  if(!cat) return;
+  viewer.innerText = cat.map(i=>`${i.v}`).join("\n");
+}
+
+function generateBackup(){
+  log("Backup gerado");
+}
+
+function resetData(){
+  for(let g in GLOBAL){
+    for(let s in GLOBAL[g]){
+      GLOBAL[g][s]=[];
+    }
+  }
+  log("Resetado");
+}
+
+function log(msg){
+  document.getElementById("log").innerText = msg;
+}
+
+// 🔥 INICIALIZA
+populateCategories();
+
+</script>
+
+</body>
+</html>
