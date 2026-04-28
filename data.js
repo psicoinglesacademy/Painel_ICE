@@ -5545,41 +5545,49 @@ const GLOBAL = {
       {
         "v": "hello (olá)",
         "tags": [
-          "greeting"
+          "greeting",
+          "moves1",
+          "n7"
         ]
       },
       {
         "v": "hi (oi)",
         "tags": [
-          "greeting"
+          "greeting",
+          "moves1",
+          "n7"
         ]
       },
       {
         "v": "good morning (bom dia)",
         "tags": [
           "greeting",
-          "moves1"
+          "moves1",
+          "n7"
         ]
       },
       {
         "v": "good afternoon (boa tarde)",
         "tags": [
           "greeting",
-          "moves1"
+          "moves1",
+          "n7"
         ]
       },
       {
         "v": "good evening (boa noite)",
         "tags": [
           "greeting",
-          "moves1"
+          "moves1",
+          "n7"
         ]
       },
       {
         "v": "nice to meet you (prazer em conhecer)",
         "tags": [
           "greeting",
-          "moves1"
+          "moves1",
+          "n7"
         ]
       },
       {
@@ -5594,6 +5602,54 @@ const GLOBAL = {
         "tags": [
           "greeting",
           "moves1"
+        ]
+      },
+      {
+        "v": "hey (ei/olá)",
+        "tags": [
+          "greeting",
+          "moves1",
+          "n7"
+        ]
+      },
+      {
+        "v": "hey, what's up? (e aí, tudo bem?)",
+        "tags": [
+          "greeting",
+          "moves1",
+          "n7"
+        ]
+      },
+      {
+        "v": "hey, how's it going? (e aí, como vai?)",
+        "tags": [
+          "greeting",
+          "moves1",
+          "n7"
+        ]
+      },
+      {
+        "v": "hi, how are you? (oi, como você está?)",
+        "tags": [
+          "greeting",
+          "moves1",
+          "n7"
+        ]
+      },
+      {
+        "v": "hello, how are you? (olá, como você está?)",
+        "tags": [
+          "greeting",
+          "moves1",
+          "n7"
+        ]
+      },
+      {
+        "v": "what's up? (e aí?)",
+        "tags": [
+          "greeting",
+          "moves1",
+          "n7"
         ]
       }
     ],

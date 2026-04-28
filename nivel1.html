@@ -126,7 +126,7 @@ function fill(id, list){
 // ===== BUILD NP (CORREÇÃO PRINCIPAL) =====
 function buildNP(det, adj, noun){
   if(!noun) return "";
-  if(!det) det = "the";
+  
   return [det, adj, noun].filter(Boolean).join(" ");
 }
 

@@ -144,7 +144,7 @@ textarea{
 
 <!-- ================= BLOCO 1 ================= -->
 <div class="card">
-<h3>🧑‍💬 Linha 1 — Minha fala</h3>
+<h3>🧑‍💬 Linha 1 — Me:</h3>
 
 <label>👋 Cumprimento</label>
 <select id="greeting"></select>
@@ -194,7 +194,7 @@ textarea{
 
 <!-- ================= BLOCO 2 ================= -->
 <div class="card">
-<h3>🟣 Linha 2 — Pergunta</h3>
+<h3>🟣 Linha 2 — Other:</h3>
 
 <select id="greeting2"></select>
 <select id="comment2"></select>
@@ -207,7 +207,7 @@ textarea{
 
 <!-- ================= BLOCO 3 ================= -->
 <div class="card">
-<h3>🟡 Linha 3 — Narrativa</h3>
+<h3>🟡 Linha 3 — Me:</h3>
 
 <!-- 🔥 NOVO MENU DE CONECTORES -->
 <select id="connector"></select>
@@ -239,7 +239,7 @@ textarea{
 
 <!-- ================= BLOCO 4 ================= -->
 <div class="card">
-<h3>🔵 Linha 4 — Fechamento</h3>
+<h3>🔵 Linha 4 — Other: Fechamento</h3>
 
 <select id="comment"></select>
 
@@ -268,6 +268,21 @@ textarea{
 
 </div></div>
 
+<!-- ===== IA CORRETORA ===== -->
+<div class="card wide">
+
+  <h3>🤖 Correção com IA</h3>
+  <p>Copie sua conversa e envie para correção.</p>
+
+  <iframe 
+    src="https://app.edcafe.ai/chatbots/69de6c17e2c8076440adfe1d"
+    title="Correção ICE"
+    allow="microphone"
+    style="border:none; width:100%; height:600px;">
+  </iframe>
+
+</div>
+
   <div class="hero-image">
     <img src="header.png" alt="ICE Banner">
   </div>
@@ -282,7 +297,14 @@ function clean(v){return v.split(" (")[0];}
 function fill(id,list){
 let el=document.getElementById(id);
 el.innerHTML='<option value="">none</option>';
-list.forEach(i=>el.innerHTML+=`<option value="${clean(i.v)}">${i.v}</option>`);
+
+const sorted = [...list].sort((a,b)=>
+clean(a.v).toLowerCase().localeCompare(clean(b.v).toLowerCase())
+);
+
+sorted.forEach(i=>{
+el.innerHTML+=`<option value="${clean(i.v)}">${i.v}</option>`;
+});
 }
 
 function buildNP(det,adj,noun){
@@ -367,7 +389,7 @@ let baseLine1=`${greeting.value} ${orientation.value} ${correction.value} ${corr
 
 p1_full.innerHTML = customInfo1 || baseLine1;
 
-q1.innerHTML = customQVal || `${greeting2.value} ${comment2.value} why did they ${v1b.value} ${buildNP(detO.value,adjO.value,nounO.value)}?`;
+q1.innerHTML = customQVal || `${greeting2.value} ${comment2.value} why did they ${v1b.value} ${v1c.value} ${buildNP(detO.value,adjO.value,nounO.value)}?`;
 
 /* 🔥 BLOCO 3 */
 p2.innerHTML = customInfo2Val || `${i1} ${connector.value} ${i2}`;
@@ -408,12 +430,41 @@ d.innerText=l;
 chat.appendChild(d);
 });
 
-copy.value=`${line1}\n${line2}\n${line3}\n${line4}`;
+const tab = "                      ➡️ "; // 4 espaços
+
+copy.value=
+`${tab}${line1}
+
+${line2}
+
+${tab}${line3}
+
+${line4}`;
 }
 
 /* ================= COPY ================= */
 function copyText(){
-navigator.clipboard.writeText(copy.value);
+
+let text = copy.value;
+
+let finalText = 
+`💬 Conversa:
+
+${text}
+
+➡️ Escreva suas dúvidas aqui:`;
+
+if (navigator.clipboard) {
+  navigator.clipboard.writeText(finalText);
+} else {
+  let temp = document.createElement("textarea");
+  temp.value = finalText;
+  document.body.appendChild(temp);
+  temp.select();
+  document.execCommand("copy");
+  document.body.removeChild(temp);
+}
+
 }
 
 update();
