@@ -58,6 +58,7 @@ button{
   color:white;
   font-size:16px;
   cursor:pointer;
+margin-bottom: 20px;
 }
 
 /* ===== CARDS (FUNCIONA PRA <a> E <div>) ===== */
