@@ -44,20 +44,14 @@ textarea, select{
 }
 
 .preview{
-  margin-top:12px;
-  padding:12px 14px;
-  border-radius:10px;
-  background:#16609b;
-  border-left:5px solid #e7534d;
-  color:#ffffff;
-  font-size:16px;
+  margin:10px 0;
+  padding:25px;
+  font-size:20px;
   text-align:center;
-  font-weight:500;
-}
-
-.preview strong{
-  display:block;
-  color:#ffffff;
+  border-radius:12px;
+  background:#f5f7fa;
+  color:#16609b;
+  font-weight:normal;
 }
 
 .chat{
@@ -112,6 +106,21 @@ textarea{
   margin-bottom:10px;
 }
 
+.title-card{
+  background:#f2ada9;
+  color:#000;
+  text-align:left;
+}
+
+.title-card:hover{
+  transform:none;
+  background:#f2ada9; /* mantém igual */
+}
+
+.title-card{
+  text-align:center;
+}
+
 </style>
 </head>
 
@@ -143,9 +152,12 @@ textarea{
 <div class="section"><div class="wrapper">
 
 <!-- ================= BLOCO 1 ================= -->
-<div class="card">
-<h3>🧑‍💬 Linha 1 — Me:</h3>
+<div class="card title-card">
+<h3>👤 Linha 1 — Me:</h3>
+</div>
 
+<!-- conteúdo -->
+<div class="card">
 <label>👋 Cumprimento</label>
 <select id="greeting"></select>
 
@@ -159,8 +171,8 @@ textarea{
 <strong id="p0"></strong>
 </div>
 
-<label>➕ ✏️ Complemento ✏️</label>
-<textarea id="correctionText" rows="2"></textarea>
+<label>➕ ✏️ Escreva o assunto ✏️</label>
+<textarea id="correctionText" rows="2">I thought about </textarea>
 
 <h3>🧩 Informação 1</h3>
 
@@ -193,10 +205,15 @@ textarea{
 </div>
 
 <!-- ================= BLOCO 2 ================= -->
-<div class="card">
-<h3>🟣 Linha 2 — Other:</h3>
+<div class="card title-card">
+<h3>⚫ Linha 2 — Other:</h3>
+</div>
 
+<!-- conteúdo -->
+<div class="card">
+<label>👋 Cumprimento</label>
 <select id="greeting2"></select>
+<label>💬 Comentário</label>
 <select id="comment2"></select>
 
 <div class="preview"><strong id="q1"></strong></div>
@@ -206,10 +223,13 @@ textarea{
 </div>
 
 <!-- ================= BLOCO 3 ================= -->
-<div class="card">
-<h3>🟡 Linha 3 — Me:</h3>
+<div class="card title-card">
+<h3>👤 Linha 3 — Me:</h3>
+</div>
 
-<!-- 🔥 NOVO MENU DE CONECTORES -->
+<!-- conteúdo -->
+<div class="card">
+<label>🔗 Conexão</label>
 <select id="connector"></select>
 
 <div class="preview"><strong id="p2"></strong></div>
@@ -238,9 +258,13 @@ textarea{
 </div>
 
 <!-- ================= BLOCO 4 ================= -->
-<div class="card">
-<h3>🔵 Linha 4 — Other: Fechamento</h3>
+<div class="card title-card">
+<h3>⚫ Linha 4 — Other: Fechamento</h3>
+</div>
 
+<!-- conteúdo -->
+<div class="card">
+<label>💬 Comentário</label>
 <select id="comment"></select>
 
 <div class="preview"><strong id="p2_repeat"></strong></div>
@@ -248,6 +272,7 @@ textarea{
 <label>✏️ Editar repetição ✏️</label>
 <textarea id="customRep" rows="2"></textarea>
 
+<label>🔚 Conclusão</label>
 <select id="conclusion"></select>
 </div>
 
@@ -314,12 +339,32 @@ return [det,adj,noun].filter(Boolean).join(" ");
 }
 
 /* ================= BANCO ================= */
-const nouns=[...GLOBAL.content_words.nuclei,...GLOBAL.content_words.nouns];
-const verbs=GLOBAL.content_words.verbs.filter(v =>
-v.tags.includes("verb_obj") &&
-!v.v.startsWith("to ") &&
-!v.v.endsWith("ing")
-);
+const nounsRaw = [...GLOBAL.content_words.nuclei, ...GLOBAL.content_words.nouns];
+
+const nouns = [...new Map(
+  nounsRaw.map(n => [clean(n.v), n])
+).values()];
+const verbs = GLOBAL.content_words.verbs.filter(v => {
+
+  const word = v.v.toLowerCase().trim();
+
+  return (
+    v.tags.includes("verb_obj") &&
+    v.tags.includes("n1") &&
+
+    !v.tags.includes("verb_inf") &&
+    !word.startsWith("to ") &&
+
+    !v.tags.includes("verb_ing") &&
+    !v.tags.includes("verb_ing_form") &&
+    !word.endsWith("ing") &&
+
+    !v.tags.includes("verb_prep") &&
+    !v.tags.includes("verb_modal") &&
+    !v.tags.includes("verb_link") &&
+    !v.tags.includes("verb_2obj")
+  );
+});
 
 
 // verbos que pedem infinitivo com "to"
@@ -341,7 +386,8 @@ const verbs_inf = GLOBAL.content_words.verbs.filter(v =>
 fill("v1b", verbs_to_follow);
 
 // v1c → verbo com "to"
-fill("v1c", verbs_inf);
+const uniqueVerbs = [...new Map(verbs_inf.map(v => [clean(v.v), v])).values()];
+fill("v1c", uniqueVerbs);
 
 // v2 mantém normal
 fill("v2", verbs);
