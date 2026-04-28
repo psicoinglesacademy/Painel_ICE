@@ -73,6 +73,16 @@ select{
 <h3>➕ Inserir Linhas</h3>
 
 <textarea id="bulkInput" rows="10"></textarea>
+<select id="levelSelect">
+  <option value="">Sem nível</option>
+  <option value="n1">N1</option>
+  <option value="n2">N2</option>
+  <option value="n3">N3</option>
+  <option value="n4">N4</option>
+  <option value="n5">N5</option>
+  <option value="n6">N6</option>
+  <option value="n7">N7</option>
+</select>
 
 <button class="validate" onclick="validateBulk()">🧪 Validar</button>
 <button onclick="processBulk()">💾 Salvar</button>
@@ -87,6 +97,10 @@ select{
 <h3>👀 Visualizar Banco</h3>
 
 <select id="category" onchange="renderViewer()"></select>
+
+<input id="tagFilter" placeholder="Filtrar por tag (ex: n1, verb_obj)" oninput="renderViewer()">
+
+<button onclick="copyViewer()">📋 Copiar</button>
 
 <div id="viewer" class="viewer"></div>
 </div>
@@ -254,11 +268,12 @@ function processBulk(){
   const lines = document.getElementById("bulkInput").value.split("\n");
 
   let added = 0;
+  let updated = 0;
   let errors = [];
 
   lines.forEach((line, i)=>{
 
-    if(!line.trim()) return; // ignora vazio
+    if(!line.trim()) return;
 
     let parts = line.split("|");
 
@@ -269,7 +284,17 @@ function processBulk(){
 
     let value = parts[0].trim();
     let path = parts[1].trim();
-    let tags = parts[2].trim();
+let baseTags = parts[2].trim()
+  .split(",")
+  .map(t => t.trim())
+  .filter(t => t);
+
+let level = document.getElementById("levelSelect").value;
+
+// adiciona nível automaticamente
+if(level && !baseTags.includes(level)){
+  baseTags.push(level);
+}
 
     let cat = getCategory(path);
 
@@ -278,21 +303,29 @@ function processBulk(){
       return;
     }
 
-    cat.push({
-      v: value,
-      tags: tags.split(",").map(t => t.trim())
-    });
+    // 🔥 PROCURA SE JÁ EXISTE
+    let existing = cat.find(item => 
+      item.v.toLowerCase() === value.toLowerCase()
+    );
 
-    added++;
+    if(existing){
+      // 🔁 ATUALIZA
+    existing.tags = baseTags;
+      updated++;
+    } else {
+      // ➕ CRIA NOVO
+      cat.push({
+        v: value,
+       tags: baseTags
+      });
+      added++;
+    }
+
   });
 
-  log(`✔ ${added} itens adicionados\n❌ ${errors.length} erros`);
+  log(`✔ ${added} adicionados\n🔁 ${updated} atualizados\n❌ ${errors.length} erros`);
 
-  if(errors.length){
-    console.log(errors);
-  }
-
-  renderViewer(); // 🔥 atualiza visual
+  renderViewer();
 }
 
 // ================= OUTROS =================
@@ -309,14 +342,48 @@ function exportData(){
 }
 
 function renderViewer(){
+
   const path = document.getElementById("category").value;
+  const tagFilter = document.getElementById("tagFilter").value;
+
   const cat = getCategory(path);
   if(!cat) return;
-  viewer.innerText = cat.map(i=>`${i.v}`).join("\n");
+
+  let items = cat;
+
+  if(tagFilter){
+    items = items.filter(i => i.tags.includes(tagFilter));
+  }
+
+ const viewer = document.getElementById("viewer");
+
+viewer.innerText = items.map(i => 
+  `${i.v} | ${path} | ${i.tags.join(",")}`
+).join("\n");
+   
 }
 
 function generateBackup(){
-  log("Backup gerado");
+
+  let lines = [];
+
+  for(let group in GLOBAL){
+    for(let sub in GLOBAL[group]){
+
+      let path = `${group}.${sub}`;
+
+      GLOBAL[group][sub].forEach(item => {
+        lines.push(
+          `${item.v} | ${path} | ${item.tags.join(",")}`
+        );
+      });
+
+    }
+  }
+
+  document.getElementById("bulkInput").value = lines.join("\n");
+
+  log("📦 Backup carregado no campo de importação");
 }
 
 function resetData(){

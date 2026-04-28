@@ -4,84 +4,96 @@ const GLOBAL = {
       {
         "v": "I (eu)",
         "tags": [
-          "pron_subj"
+          "pron_subj",
+          "n1"
         ]
       },
       {
         "v": "you (você)",
         "tags": [
-          "pron_subj"
+          "pron_subj",
+          "n1"
         ]
       },
       {
         "v": "he (ele)",
         "tags": [
           "pron_subj",
-          "singular"
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "she (ela)",
         "tags": [
           "pron_subj",
-          "singular"
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "it (isso)",
         "tags": [
-          "pron_subj",
-          "singular"
+          "pron_obj",
+          "n1"
         ]
       },
       {
         "v": "we (nós)",
         "tags": [
           "pron_subj",
-          "plural"
+          "plural",
+          "n1"
         ]
       },
       {
         "v": "they (eles)",
         "tags": [
           "pron_subj",
-          "plural"
+          "plural",
+          "n1"
         ]
       },
       {
         "v": "me (me/mim)",
         "tags": [
-          "pron_obj"
+          "pron_obj",
+          "n1"
         ]
       },
       {
         "v": "you (te/você)",
         "tags": [
-          "pron_obj"
+          "pron_obj",
+          "n1"
         ]
       },
       {
         "v": "him (ele)",
         "tags": [
-          "pron_obj"
+          "pron_obj",
+          "n1"
         ]
       },
       {
         "v": "her (ela)",
         "tags": [
-          "pron_obj"
+          "pron_obj",
+          "n1"
         ]
       },
       {
         "v": "us (nos/nós)",
         "tags": [
-          "pron_obj"
+          "pron_obj",
+          "n1"
         ]
       },
       {
         "v": "them (eles/elas)",
         "tags": [
-          "pron_obj"
+          "pron_obj",
+          "n1"
         ]
       },
       {
@@ -96,32 +108,37 @@ const GLOBAL = {
         "v": "a (um/uma)",
         "tags": [
           "det",
-          "singular"
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "an (um/uma)",
         "tags": [
           "det",
-          "singular"
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "the (o/a/os/as)",
         "tags": [
-          "det"
+          "det",
+          "n1"
         ]
       },
       {
         "v": "my (meu/minha)",
         "tags": [
-          "det"
+          "det",
+          "n1"
         ]
       },
       {
         "v": "your (seu/sua)",
         "tags": [
-          "det"
+          "det",
+          "n1"
         ]
       },
       {
@@ -240,31 +257,36 @@ const GLOBAL = {
       {
         "v": "his (dele)",
         "tags": [
-          "det"
+          "det",
+          "n1"
         ]
       },
       {
         "v": "her (dela)",
         "tags": [
-          "det"
+          "det",
+          "n1"
         ]
       },
       {
         "v": "its (dele/dela - neutro)",
         "tags": [
-          "det"
+          "det",
+          "n1"
         ]
       },
       {
         "v": "our (nosso)",
         "tags": [
-          "det"
+          "det",
+          "n1"
         ]
       },
       {
         "v": "their (deles)",
         "tags": [
-          "det"
+          "det",
+          "n1"
         ]
       }
     ],
@@ -510,62 +532,109 @@ const GLOBAL = {
         "v": "man (homem)",
         "tags": [
           "man",
-          "singular"
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "woman (mulher)",
         "tags": [
           "woman",
-          "singular"
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "people (pessoas)",
         "tags": [
-          "people",
-          "plural"
+          "person",
+          "plural",
+          "n1"
         ]
       },
       {
         "v": "animal (animal)",
         "tags": [
           "animal",
-          "singular"
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "animals (animais)",
         "tags": [
           "animal",
-          "plural"
+          "plural",
+          "n1"
         ]
       },
       {
         "v": "thing (coisa)",
         "tags": [
           "thing",
-          "singular"
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "things (coisas)",
         "tags": [
           "thing",
-          "plural"
+          "plural",
+          "n1"
         ]
       },
       {
         "v": "place (lugar)",
         "tags": [
           "place",
-          "singular"
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "places (lugares)",
         "tags": [
           "place",
+          "plural",
+          "n1"
+        ]
+      },
+      {
+        "v": "boy (menino)",
+        "tags": [
+          "man",
+          "singular",
+          "n1"
+        ]
+      },
+      {
+        "v": "girl (menina)",
+        "tags": [
+          "woman",
+          "singular",
+          "n1"
+        ]
+      },
+      {
+        "v": "baby (bebê)",
+        "tags": [
+          "person",
+          "singular",
+          "n1"
+        ]
+      },
+      {
+        "v": "event (evento)",
+        "tags": [
+          "event",
+          "singular"
+        ]
+      },
+      {
+        "v": "events (eventos)",
+        "tags": [
+          "event",
           "plural"
         ]
       }
@@ -574,10 +643,9 @@ const GLOBAL = {
       {
         "v": "teacher (professor)",
         "tags": [
-          "man",
-          "person",
-          "study",
-          "singular"
+          "people",
+          "singular",
+          "n1"
         ]
       },
       {
@@ -593,7 +661,8 @@ const GLOBAL = {
         "v": "dog (cachorro)",
         "tags": [
           "animal",
-          "singular"
+          "singular",
+          "n1"
         ]
       },
       {
@@ -634,15 +703,17 @@ const GLOBAL = {
       {
         "v": "father (pai)",
         "tags": [
-          "man",
-          "singular"
+          "people",
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "brother (irmão)",
         "tags": [
-          "man",
-          "singular"
+          "people",
+          "singular",
+          "n1"
         ]
       },
       {
@@ -711,22 +782,25 @@ const GLOBAL = {
       {
         "v": "friend (amigo)",
         "tags": [
-          "man",
-          "singular"
+          "people",
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "neighbor (vizinho)",
         "tags": [
-          "man",
-          "singular"
+          "people",
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "boss (chefe)",
         "tags": [
-          "man",
-          "singular"
+          "people",
+          "singular",
+          "n1"
         ]
       },
       {
@@ -767,15 +841,17 @@ const GLOBAL = {
       {
         "v": "mother (mãe)",
         "tags": [
-          "woman",
-          "singular"
+          "people",
+          "singular",
+          "n1"
         ]
       },
       {
         "v": "sister (irmã)",
         "tags": [
-          "woman",
-          "singular"
+          "people",
+          "singular",
+          "n1"
         ]
       },
       {
@@ -1020,7 +1096,8 @@ const GLOBAL = {
         "v": "cat (gato)",
         "tags": [
           "animal",
-          "singular"
+          "singular",
+          "n1"
         ]
       },
       {
@@ -2090,6 +2167,22 @@ const GLOBAL = {
           "thing",
           "plural"
         ]
+      },
+      {
+        "v": "mom (mãe)",
+        "tags": [
+          "people",
+          "singular",
+          "n1"
+        ]
+      },
+      {
+        "v": "dad (pai)",
+        "tags": [
+          "people",
+          "singular",
+          "n1"
+        ]
       }
     ],
     "verbs": [
@@ -2097,7 +2190,8 @@ const GLOBAL = {
         "v": "eat (comer)",
         "tags": [
           "verb",
-          "verb_obj"
+          "verb_obj",
+          "n1"
         ]
       },
       {
@@ -2195,21 +2289,24 @@ const GLOBAL = {
         "v": "take (pegar/levar)",
         "tags": [
           "verb",
-          "verb_obj"
+          "verb_obj",
+          "n1"
         ]
       },
       {
         "v": "use (usar)",
         "tags": [
           "verb",
-          "verb_obj"
+          "verb_obj",
+          "n1"
         ]
       },
       {
         "v": "see (ver)",
         "tags": [
           "verb",
-          "verb_obj"
+          "verb_obj",
+          "n1"
         ]
       },
       {
@@ -2237,14 +2334,16 @@ const GLOBAL = {
         "v": "open (abrir)",
         "tags": [
           "verb",
-          "verb_obj"
+          "verb_obj",
+          "n1"
         ]
       },
       {
         "v": "close (fechar)",
         "tags": [
           "verb",
-          "verb_obj"
+          "verb_obj",
+          "n1"
         ]
       },
       {
@@ -2293,14 +2392,16 @@ const GLOBAL = {
         "v": "call (ligar/chamar)",
         "tags": [
           "verb",
-          "verb_obj"
+          "verb_obj",
+          "n1"
         ]
       },
       {
         "v": "help (ajudar)",
         "tags": [
           "verb",
-          "verb_obj"
+          "verb_obj",
+          "n1"
         ]
       },
       {
@@ -2538,7 +2639,8 @@ const GLOBAL = {
         "v": "like (gostar)",
         "tags": [
           "verb",
-          "verb_obj"
+          "verb_obj",
+          "n1"
         ]
       },
       {
@@ -2973,7 +3075,8 @@ const GLOBAL = {
         "v": "have (ter)",
         "tags": [
           "verb",
-          "verb_obj"
+          "verb_obj",
+          "n1"
         ]
       },
       {
@@ -4934,25 +5037,29 @@ const GLOBAL = {
       {
         "v": "good (bom)",
         "tags": [
-          "adj"
+          "adj",
+          "n1"
         ]
       },
       {
         "v": "bad (ruim)",
         "tags": [
-          "adj"
+          "adj",
+          "n1"
         ]
       },
       {
         "v": "new (novo)",
         "tags": [
-          "adj"
+          "adj",
+          "n1"
         ]
       },
       {
         "v": "old (velho)",
         "tags": [
-          "adj"
+          "adj",
+          "n1"
         ]
       },
       {

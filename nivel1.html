@@ -51,6 +51,8 @@
 
 <button onclick="build()">✍️ Formular Frase</button>
 
+<h3>🧩 Veja sua frase ✨</h3>
+
 <div class="result" id="result"></div>
 
 <div id="replaceArea" style="display:none; margin-top:20px;">
@@ -129,6 +131,7 @@ function buildNP(det, adj, noun){
 }
 
 // ===== FILTRO SEMÂNTICO =====
+// ===== FILTRO SEMÂNTICO N1 =====
 function filterSmart(nucleus){
 
   const base = GLOBAL.content_words.nuclei.find(n => clean(n.v) === nucleus);
@@ -137,7 +140,7 @@ function filterSmart(nucleus){
   const core = base.tags[0];
   const number = base.tags.includes("plural") ? "plural" : "singular";
 
-  return GLOBAL.content_words.nouns.filter(n =>
+  return nounsN1.filter(n =>
     n.tags.includes(core) && n.tags.includes(number)
   );
 }
@@ -151,37 +154,60 @@ const semanticMap = {
 };
 
 // ===== BANCO =====
-const subjects = GLOBAL.function_words.pronouns.filter(p => p.tags.includes("pron_subj"));
+// ===== BANCO N1 (COMPLETO) =====
+const subjects = GLOBAL.function_words.pronouns.filter(p => 
+  p.tags.includes("pron_subj") && p.tags.includes("n1")
+);
+
 const verbs = GLOBAL.content_words.verbs.filter(v => {
 
   const word = v.v.toLowerCase().trim();
 
   return (
     v.tags.includes("verb_obj") &&
+    v.tags.includes("n1") &&
 
-    // ❌ remove infinitivo
     !v.tags.includes("verb_inf") &&
     !word.startsWith("to ") &&
 
-    // ❌ remove gerúndio
     !v.tags.includes("verb_ing") &&
     !v.tags.includes("verb_ing_form") &&
     !word.endsWith("ing") &&
 
-    // ❌ remove phrasal/prep
     !v.tags.includes("verb_prep") &&
-
-    // ❌ remove verbos especiais
     !v.tags.includes("verb_modal") &&
     !v.tags.includes("verb_link") &&
     !v.tags.includes("verb_2obj")
   );
 });
-const objects = GLOBAL.function_words.pronouns.filter(p => p.tags.includes("pron_obj"));
 
-const dets = GLOBAL.function_words.determiners;
-const adjs = GLOBAL.content_words.adjectives;
-const nuclei = GLOBAL.content_words.nuclei;
+const objects = GLOBAL.function_words.pronouns.filter(p => 
+  p.tags.includes("pron_obj") && p.tags.includes("n1")
+);
+
+const dets = GLOBAL.function_words.determiners.filter(d => 
+  d.tags.includes("n1")
+);
+
+const adjs = GLOBAL.content_words.adjectives.filter(a => 
+  a.tags.includes("n1")
+);
+
+const nuclei = GLOBAL.content_words.nuclei.filter(n => 
+  n.tags.includes("n1")
+);
+
+// 🔥 NOVO — N1 nouns centralizado
+const nounsN1 = GLOBAL.content_words.nouns.filter(n => 
+  n.tags.includes("n1")
+);
+
+const nounOptionsN1 = [
+  ...nuclei,
+  ...nounsN1.filter(n => 
+    !nuclei.some(k => clean(k.v) === clean(n.v))
+  )
+];
 
 // ===== LOAD =====
 fill("s1", subjects);
@@ -219,35 +245,14 @@ function build(){
 }
 
 // ===== UPDATE REPLACE =====
+// ===== UPDATE REPLACE (N1 PURO) =====
 function updateReplace(){
 
-  let subj = current.s;
-  let obj = current.o;
+  // 🔥 SEM FILTRO — MOSTRA TUDO DO N1 (nouns + nuclei)
 
-  // SUJEITO
-  if(semanticMap[subj]){
-    fill("nounRS", filterSmart(semanticMap[subj]));
-  } else {
-    fill("nounRS", GLOBAL.content_words.nouns);
-  }
+  fill("nounRS", nounOptionsN1);
+  fill("nounRO", nounOptionsN1);
 
-  // OBJETO
-  if(obj){
-    if(obj === "him" || obj === "her"){
-      fill("nounRO", filterSmart("man"));
-    }
-    else if(obj === "them"){
-      fill("nounRO", filterSmart("people"));
-    }
-    else if(obj === "it"){
-      fill("nounRO", filterSmart("thing"));
-    }
-    else{
-      fill("nounRO", GLOBAL.content_words.nouns);
-    }
-  } else {
-    fill("nounRO", GLOBAL.content_words.nouns);
-  }
 }
 
 // ===== APPLY =====
