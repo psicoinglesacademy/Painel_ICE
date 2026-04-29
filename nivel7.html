@@ -121,6 +121,22 @@ textarea{
   text-align:center;
 }
 
+.blue{ color:#0984e3; }
+.verb{ color:#e17055; font-weight:600; }
+
+.info-box{
+  border:2px solid #16609b;
+  border-radius:12px;
+  padding:15px;
+  margin-top:15px;
+  background:#fdfdfd;
+}
+
+.connector{
+  color:#000;
+  font-weight:600; /* opcional */
+}
+
 </style>
 </head>
 
@@ -172,9 +188,13 @@ textarea{
 </div>
 
 <label>➕ ✏️ Escreva o assunto ✏️</label>
-<textarea id="correctionText" rows="2">I thought about </textarea>
+<textarea id="correctionText" rows="1">I was thinking about </textarea>
 
-<h3>🧩 Informação 1</h3>
+<label>✏️ Editar fala</label>
+<textarea id="customP0" rows="2"></textarea>
+
+<div class="info-box">
+<h3>🧩 Informação 1 - Monte a frase</h3>
 
 <label>👤 Sujeito</label>
 <div class="row">
@@ -195,6 +215,7 @@ textarea{
 <select id="adjO"></select>
 <select id="nounO"></select>
 </div>
+</div> 
 
 <div class="preview">
 <strong id="p1_full"></strong>
@@ -229,11 +250,21 @@ textarea{
 
 <!-- conteúdo -->
 <div class="card">
-<label>🔗 Conexão</label>
-<select id="connector"></select>
 
 <div class="preview"><strong id="p2"></strong></div>
 
+<!-- 🔥 NOVO CAMPO DE EDIÇÃO -->
+<label>✏️ Editar frase ✏️</label>
+<textarea id="customInfo2" rows="2"></textarea>
+
+
+<label>🔗 Conexão</label>
+<select id="connector"></select>
+
+
+<div class="info-box">
+
+<h3>🧩 Informação 2 - Monte a frase</h3>
 <label>👤 Sujeito</label>
 <div class="row">
 <select id="s2"></select>
@@ -248,12 +279,8 @@ textarea{
 <div class="row">
 <select id="o2"></select>
 </div>
+</div>
 
-
-
-<!-- 🔥 NOVO CAMPO DE EDIÇÃO -->
-<label>✏️ Editar frase ✏️</label>
-<textarea id="customInfo2" rows="2"></textarea>
 
 </div>
 
@@ -277,17 +304,37 @@ textarea{
 </div>
 
 <!-- ================= RESULTADO ================= -->
+
+
+
 <div class="card">
+
+
+  <h3>🧠 Gerador de Diálogo</h3>
+  <p>Clique no botão abaixo para gerar sua conversa, depois copie e cole no Corretor ou mostre ao seu professor.</p>
+
 <div style="margin-top:20px;">
   <button onclick="buildConversation()">✍️ Gerar Conversa</button>
 </div>
 
+
+<div class="info-box" style="text-align:center; margin-top:20px;">
 <div id="chat" class="chat"></div>
+</div>
 
 <textarea id="copy" style="display:none;"></textarea>
 
 <div style="margin-top:15px;">
   <button class="copy-btn" onclick="copyText()">📋 Copiar</button>
+<div id="copyMsg" style="
+  margin-top:10px;
+  font-size:14px;
+  color:#4CAF50;
+  opacity:0;
+  transition:0.3s;
+">
+  ✔️ Copiado com sucesso!
+</div>
 </div>
 </div>
 
@@ -323,6 +370,7 @@ function fill(id,list){
 let el=document.getElementById(id);
 el.innerHTML='<option value="">none</option>';
 
+
 const sorted = [...list].sort((a,b)=>
 clean(a.v).toLowerCase().localeCompare(clean(b.v).toLowerCase())
 );
@@ -333,9 +381,8 @@ el.innerHTML+=`<option value="${clean(i.v)}">${i.v}</option>`;
 }
 
 function buildNP(det,adj,noun){
-if(!noun) return "";
-if(!det) det="the";
-return [det,adj,noun].filter(Boolean).join(" ");
+  if(!noun) return "";
+  return [det,adj,noun].filter(Boolean).join(" ");
 }
 
 /* ================= BANCO ================= */
@@ -395,6 +442,7 @@ fill("v2", verbs);
 
 /* 🔥 NOVOS CONECTORES */
 fill("connector", GLOBAL.conversation_moves.connection);
+document.getElementById("connector").value = "because";
 
 // 🔥 CARREGAMENTO DINÂMICO DOS MOVIMENTOS DE CONVERSA
 
@@ -408,11 +456,20 @@ fill("conclusion", GLOBAL.conversation_moves.conclusion);
 
 /* ================= FRASES ================= */
 function info1(){
-return `${buildNP(detS.value,adjS.value,nounS.value)} ${v1b.value} ${v1c.value} ${buildNP(detO.value,adjO.value,nounO.value)}`;
+return [
+  `<span class="blue">${buildNP(detS.value,adjS.value,nounS.value)}</span>`,
+  `<span class="verb">${v1b.value}</span>`,
+  `<span class="verb">${v1c.value}</span>`,
+  `<span class="blue">${buildNP(detO.value,adjO.value,nounO.value)}</span>`
+].filter(Boolean).join(" ");
 }
 
 function info2(){
-return `${s2.value} ${v2.value} ${o2.value}`;
+  return [
+    `<span class="blue">${s2.value}</span>`,
+    `<span class="verb">${v2.value}</span>`,
+    `<span class="blue">${o2.value}</span>`
+  ].filter(Boolean).join(" ");
 }
 
 /* ================= UPDATE ================= */
@@ -429,16 +486,24 @@ let customRepVal=customRep.value.trim();
 let customInfo2Val=customInfo2.value.trim();
 
 
-let preview0 = `${greeting.value} ${orientation.value} ${correction.value} ${correctionText.value}`;
-p0.innerHTML = preview0;
-let baseLine1=`${greeting.value} ${orientation.value} ${correction.value} ${correctionText.value}, ${i1}`;
+let preview0 = [greeting.value, orientation.value, correction.value, correctionText.value]
+  .filter(Boolean)
+  .join(" ");
+
+let customP0Val = document.getElementById("customP0").value.trim();
+
+p0.innerHTML = customP0Val || preview0;
+
+let baseLine1 = `${preview0}, ${i1}`;
 
 p1_full.innerHTML = customInfo1 || baseLine1;
 
 q1.innerHTML = customQVal || `${greeting2.value} ${comment2.value} why did they ${v1b.value} ${v1c.value} ${buildNP(detO.value,adjO.value,nounO.value)}?`;
 
 /* 🔥 BLOCO 3 */
-p2.innerHTML = customInfo2Val || `${i1} ${connector.value} ${i2}`;
+let cleanI1 = i1; // mantém colorido
+
+p2.innerHTML = customInfo2Val || `${cleanI1} <span class="connector">${connector.value}</span> ${i2}`;
 
 p2_repeat.innerHTML = customRepVal || i2;
 }
@@ -453,17 +518,26 @@ function buildConversation(){
 let i1=info1();
 let i2=info2();
 
-let baseLine1=`${greeting.value} ${orientation.value} ${correction.value} ${correctionText.value}, ${i1}`;
 
-let line1=`Me: ${customInfo1Input() || baseLine1}`;
+let preview0 = [greeting.value, orientation.value, correction.value, correctionText.value]
+  .filter(Boolean)
+  .join(" ");
 
-let question = customQ.value.trim() || `${greeting2.value} ${comment2.value} why did they ${v1b.value} ${buildNP(detO.value,adjO.value,nounO.value)}?`;
+let baseLine1 = `${preview0}, ${i1}`;
+
+let customP0Val = document.getElementById("customP0").value.trim();
+
+let line1 = `Me: ${customInfo1Input() || customP0Val || baseLine1}`;
+
+let question = customQ.value.trim() || `${greeting2.value} ${comment2.value} why did they ${v1b.value} ${v1c.value} ${buildNP(detO.value,adjO.value,nounO.value)}?`;
 
 let repetition = customRep.value.trim() || i2;
 
 /* 🔥 BLOCO 3 */
 let customInfo2Val=customInfo2.value.trim();
-let line3=`Me: ${customInfo2Val || `${i1} ${connector.value} ${i2}`}`;
+let cleanI1 = i1.replace(/<[^>]+>/g, "");
+
+let line3=`Me: ${customInfo2Val || `${cleanI1} ${connector.value} ${i2}`}`;
 
 let line2=`Other: ${question}`;
 let line4=`Other: ${comment.value}. ${repetition}. ${conclusion.value}.`;
@@ -472,7 +546,7 @@ chat.innerHTML="";
 [line1,line2,line3,line4].forEach((l,i)=>{
 let d=document.createElement("div");
 d.className="msg "+(i%2===0?"me":"other");
-d.innerText=l;
+d.innerText = l.replace(/<[^>]+>/g, "");
 chat.appendChild(d);
 });
 
@@ -496,10 +570,9 @@ let text = copy.value;
 let finalText = 
 `💬 Conversa:
 
-${text}
+${text}`;
 
-➡️ Escreva suas dúvidas aqui:`;
-
+// copia
 if (navigator.clipboard) {
   navigator.clipboard.writeText(finalText);
 } else {
@@ -511,7 +584,16 @@ if (navigator.clipboard) {
   document.body.removeChild(temp);
 }
 
+// 🔥 feedback visual
+let msg = document.getElementById("copyMsg");
+msg.style.opacity = "1";
+
+setTimeout(()=>{
+  msg.style.opacity = "0";
+}, 2000);
+
 }
+
 
 update();
 
