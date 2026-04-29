@@ -550,16 +550,21 @@ d.innerText = l.replace(/<[^>]+>/g, "");
 chat.appendChild(d);
 });
 
-const tab = "                      ➡️ "; // 4 espaços
+let cleanLine1 = (customInfo1Input() || customP0Val || baseLine1).replace(/<[^>]+>/g, "");
+let cleanLine2 = question.replace(/<[^>]+>/g, "");
+let cleanLine3 = (customInfo2Val || `${cleanI1} ${connector.value} ${i2}`).replace(/<[^>]+>/g, "");
+let cleanLine4 = `${comment.value}. ${repetition}. ${conclusion.value}.`.replace(/<[^>]+>/g, "");
 
-copy.value=
-`${tab}${line1}
+copy.value =
+`💬 Conversa:
 
-${line2}
+🧑‍🎓 ${cleanLine1}
 
-${tab}${line3}
+➡️ ${cleanLine2}
 
-${line4}`;
+🧑‍🎓 ${cleanLine3}
+
+➡️ ${cleanLine4}`;
 }
 
 /* ================= COPY ================= */
@@ -568,7 +573,7 @@ function copyText(){
 let text = copy.value;
 
 let finalText = 
-`💬 Conversa:
+`
 
 ${text}`;
 
